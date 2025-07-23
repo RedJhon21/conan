@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import { MetricCard } from './MetricCard';
 import { AlertCard } from './AlertCard';
 import { FraudChart } from './FraudChart';
 import { Header } from './Header';
+import { TransactionMonitor } from './TransactionMonitor';
+import { RiskGauge } from './RiskGauge';
+import { RiskFactorsPanel } from './RiskFactorsPanel';
+import { StatisticsCards } from './StatisticsCards';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  CreditCard, 
-  Shield, 
-  TrendingUp, 
-  AlertTriangle,
   RefreshCw 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -127,50 +126,38 @@ export const Dashboard: React.FC = () => {
           </Button>
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <MetricCard
-            title={t('metrics.totalTransactions')}
-            value={metrics.totalTransactions.toLocaleString()}
-            change="+12.5% from last month"
-            changeType="positive"
-            icon={CreditCard}
-          />
-          <MetricCard
-            title={t('metrics.fraudDetected')}
-            value={metrics.fraudDetected}
-            change="-8.2% from last month"
-            changeType="positive"
-            icon={Shield}
-          />
-          <MetricCard
-            title={t('metrics.riskScore')}
-            value={`${metrics.riskScore}/10`}
-            change="+0.3 from last week"
-            changeType="neutral"
-            icon={TrendingUp}
-          />
-          <MetricCard
-            title={t('metrics.falsePositives')}
-            value={metrics.falsePositives}
-            change="-15.1% from last month"
-            changeType="positive"
-            icon={AlertTriangle}
-          />
+        {/* Enhanced Statistics Cards */}
+        <div className="mb-8">
+          <StatisticsCards />
         </div>
 
-        {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <FraudChart
-            title={t('charts.fraudTrends')}
-            data={chartData}
-            type="line"
-          />
-          <FraudChart
-            title={t('charts.transactionVolume')}
-            data={volumeData}
-            type="bar"
-          />
+        {/* Risk Overview Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-1">
+            <RiskGauge value={67} title={t('risk.overallScore') || 'Overall Risk Score'} />
+          </div>
+          <div className="lg:col-span-2">
+            <RiskFactorsPanel />
+          </div>
+        </div>
+
+        {/* Transaction Monitoring & Charts */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+          <div className="xl:col-span-2">
+            <TransactionMonitor />
+          </div>
+          <div className="space-y-6">
+            <FraudChart
+              title={t('charts.fraudTrends')}
+              data={chartData}
+              type="line"
+            />
+            <FraudChart
+              title={t('charts.transactionVolume')}
+              data={volumeData}
+              type="bar"
+            />
+          </div>
         </div>
 
         {/* Alerts Section */}
