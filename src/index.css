@@ -140,4 +140,153 @@ All colors MUST be HSL.
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary));
   }
+
+  /* Print Styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    
+    .print-area {
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .print-header {
+      display: block !important;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: black !important;
+      background: white !important;
+    }
+
+    .print-footer {
+      display: block !important;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 10px;
+      color: #666 !important;
+      background: white !important;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+
+    body {
+      background: white !important;
+      color: black !important;
+    }
+
+    .bg-card, .bg-background, .bg-muted {
+      background: white !important;
+      border: 1px solid #ddd !important;
+    }
+
+    .text-foreground, .text-muted-foreground {
+      color: black !important;
+    }
+
+    .shadow-lg, .shadow-md, .shadow-sm {
+      box-shadow: none !important;
+    }
+  }
+
+  /* Enhanced Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .interactive-element {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .interactive-element:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+
+  .interactive-element:active {
+    transform: scale(0.98);
+  }
+
+  /* Mobile touch feedback */
+  @media (hover: none) and (pointer: coarse) {
+    .interactive-element:active {
+      background-color: hsl(var(--accent));
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Loading shimmer effect */
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
 }

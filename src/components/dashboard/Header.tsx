@@ -2,6 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Languages, Shield, Wifi } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { UserProfile } from './UserProfile';
+import { CustomizationPanel } from './CustomizationPanel';
+import { ReportGenerator } from '../reports/ReportGenerator';
+import { HelpTooltip } from './HelpTooltip';
 
 export const Header: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -34,6 +38,12 @@ export const Header: React.FC = () => {
               <Badge variant="outline" className="text-success border-success">
                 {t('status.online')}
               </Badge>
+              <HelpTooltip content={t('help.systemStatus')} />
+            </div>
+
+            <div className="hidden sm:flex items-center space-x-2">
+              <ReportGenerator />
+              <CustomizationPanel />
             </div>
 
             <Button 
@@ -45,6 +55,8 @@ export const Header: React.FC = () => {
               <Languages className="h-4 w-4" />
               <span>{t('language.toggle')}</span>
             </Button>
+
+            <UserProfile />
           </div>
         </div>
       </div>

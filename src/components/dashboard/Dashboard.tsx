@@ -6,6 +6,8 @@ import { TransactionMonitor } from './TransactionMonitor';
 import { RiskGauge } from './RiskGauge';
 import { RiskFactorsPanel } from './RiskFactorsPanel';
 import { StatisticsCards } from './StatisticsCards';
+import { PerformanceMonitor } from './PerformanceMonitor';
+import { PatternDetectionVisualization } from './pattern-detection/PatternDetectionVisualization';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -158,6 +160,16 @@ export const Dashboard: React.FC = () => {
               type="bar"
             />
           </div>
+        </div>
+
+        {/* Pattern Detection */}
+        <div className="mb-8">
+          <PatternDetectionVisualization />
+        </div>
+
+        {/* Performance Monitor */}
+        <div className="mb-8">
+          <PerformanceMonitor />
         </div>
 
         {/* Alerts Section */}
