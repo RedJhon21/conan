@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, Clock, DollarSign, AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Search, MapPin, Clock, DollarSign, AlertTriangle, Brain } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+import AISummary from './AISummary';
 
 interface Transaction {
   id: string;
@@ -56,6 +58,8 @@ export const TransactionMonitor: React.FC = () => {
   const { t } = useLanguage();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [showAISummary, setShowAISummary] = useState(false);
 
   useEffect(() => {
     // Initialize with some transactions
@@ -77,88 +81,119 @@ export const TransactionMonitor: React.FC = () => {
     transaction.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleGenerateAISummary = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowAISummary(true);
+  };
+
+  const handleCloseSummary = () => {
+    setShowAISummary(false);
+    setSelectedTransaction(null);
+  };
+
   return (
-    <Card className="h-[600px] bg-card border-border">
-      <CardHeader className="space-y-4">
-        <CardTitle className="text-lg font-semibold text-foreground">
-          {t('transactions.realTimeMonitor') || 'Real-time Transaction Monitor'}
-        </CardTitle>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={t('transactions.search') || 'Search transactions...'}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <ScrollArea className="h-[480px]">
-          <div className="space-y-2 p-6 pt-0">
-            <AnimatePresence>
-              {filteredTransactions.map((transaction, index) => (
-                <motion.div
-                  key={transaction.id}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className={cn(
-                    "p-4 rounded-lg border transition-all duration-200 hover:shadow-md",
-                    "bg-card/50 border-border/50 hover:border-border"
-                  )}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "w-3 h-3 rounded-full",
-                        transaction.riskLevel === 'high' && "bg-destructive",
-                        transaction.riskLevel === 'medium' && "bg-amber-500",
-                        transaction.riskLevel === 'low' && "bg-success"
-                      )} />
-                      <span className="font-mono text-sm text-foreground">{transaction.id}</span>
-                    </div>
-                    <Badge className={getRiskColor(transaction.riskLevel)}>
-                      {transaction.riskLevel === 'high' && <AlertTriangle className="w-3 h-3 mr-1" />}
-                      {transaction.riskScore}%
-                    </Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-primary" />
-                      <span className="font-medium text-foreground">
-                        {transaction.amount.toLocaleString()} {transaction.currency}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-primary" />
-                      <span className="text-muted-foreground">{transaction.location}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-primary" />
-                      <span className="text-muted-foreground">
-                        {transaction.timestamp.toLocaleTimeString()}
-                      </span>
-                    </div>
-                    
-                    <div className="text-muted-foreground truncate">
-                      {transaction.merchant}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    {transaction.type}
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+    <>
+      <Card className="h-[600px] bg-card border-border">
+        <CardHeader className="space-y-4">
+          <CardTitle className="text-lg font-semibold text-foreground">
+            {t('transactions.realTimeMonitor') || 'Real-time Transaction Monitor'}
+          </CardTitle>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={t('transactions.search') || 'Search transactions...'}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="p-0">
+          <ScrollArea className="h-[480px]">
+            <div className="space-y-2 p-6 pt-0">
+              <AnimatePresence>
+                {filteredTransactions.map((transaction, index) => (
+                  <motion.div
+                    key={transaction.id}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className={cn(
+                      "p-4 rounded-lg border transition-all duration-200 hover:shadow-md",
+                      "bg-card/50 border-border/50 hover:border-border"
+                    )}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          "w-3 h-3 rounded-full",
+                          transaction.riskLevel === 'high' && "bg-destructive",
+                          transaction.riskLevel === 'medium' && "bg-amber-500",
+                          transaction.riskLevel === 'low' && "bg-success"
+                        )} />
+                        <span className="font-mono text-sm text-foreground">{transaction.id}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className={getRiskColor(transaction.riskLevel)}>
+                          {transaction.riskLevel === 'high' && <AlertTriangle className="w-3 h-3 mr-1" />}
+                          {transaction.riskScore}%
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleGenerateAISummary(transaction)}
+                          className="gap-1 h-6 px-2 text-xs"
+                        >
+                          <Brain className="h-3 w-3" />
+                          {t('ai.generateSummary')}
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-primary" />
+                        <span className="font-medium text-foreground">
+                          {transaction.amount.toLocaleString()} {transaction.currency}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-primary" />
+                        <span className="text-muted-foreground">{transaction.location}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-primary" />
+                        <span className="text-muted-foreground">
+                          {transaction.timestamp.toLocaleTimeString()}
+                        </span>
+                      </div>
+                      
+                      <div className="text-muted-foreground truncate">
+                        {transaction.merchant}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      {transaction.type}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+
+      {selectedTransaction && (
+        <AISummary
+          transaction={selectedTransaction}
+          isOpen={showAISummary}
+          onClose={handleCloseSummary}
+        />
+      )}
+    </>
   );
 };

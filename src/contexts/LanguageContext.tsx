@@ -40,6 +40,23 @@ const translations = {
     'common.viewDetails': 'View Details',
     'common.refresh': 'Refresh',
     'common.export': 'Export',
+    
+    // AI Summary
+    'ai.generateSummary': 'Generate AI Summary',
+    'ai.summary': 'AI Summary',
+    'ai.generating': 'Generating summary...',
+    'ai.copyToClipboard': 'Copy to Clipboard',
+    'ai.copied': 'Copied to clipboard!',
+    'ai.error': 'Failed to generate summary',
+    'ai.retry': 'Retry',
+    'ai.close': 'Close',
+    
+    // Summary Sections
+    'summary.overview': 'Transaction Overview',
+    'summary.riskAssessment': 'Risk Assessment',
+    'summary.fraudIndicators': 'Fraud Indicators',
+    'summary.recommendations': 'Recommendations',
+    'summary.historicalContext': 'Historical Context',
   },
   ar: {
     // Header
@@ -72,6 +89,23 @@ const translations = {
     'common.viewDetails': 'عرض التفاصيل',
     'common.refresh': 'تحديث',
     'common.export': 'تصدير',
+    
+    // AI Summary
+    'ai.generateSummary': 'إنشاء ملخص ذكي',
+    'ai.summary': 'الملخص الذكي',
+    'ai.generating': 'جاري إنشاء الملخص...',
+    'ai.copyToClipboard': 'نسخ إلى الحافظة',
+    'ai.copied': 'تم النسخ إلى الحافظة!',
+    'ai.error': 'فشل في إنشاء الملخص',
+    'ai.retry': 'إعادة المحاولة',
+    'ai.close': 'إغلاق',
+    
+    // Summary Sections
+    'summary.overview': 'نظرة عامة على المعاملة',
+    'summary.riskAssessment': 'تقييم المخاطر',
+    'summary.fraudIndicators': 'مؤشرات الاحتيال',
+    'summary.recommendations': 'التوصيات',
+    'summary.historicalContext': 'السياق التاريخي',
   },
 };
 
