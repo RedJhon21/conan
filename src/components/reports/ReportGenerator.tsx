@@ -33,6 +33,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { generateReport as generateReportFile } from '@/services/reportService';
 
 interface ReportConfig {
   type: 'summary' | 'detailed' | 'trends' | 'performance';
@@ -131,15 +132,12 @@ export const ReportGenerator: React.FC = () => {
     setIsGenerating(true);
 
     try {
-      // Simulate report generation
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
       if (config.format === 'print') {
         // Trigger print dialog
         window.print();
       } else {
-        // Simulate file download
-        const fileName = `conan-fraud-report-${config.type}-${Date.now()}.${config.format}`;
+        // Generate and download actual report
+        const fileName = await generateReportFile(config);
         toast({
           title: t('reports.generated'),
           description: `${t('reports.downloadStarted')}: ${fileName}`,
