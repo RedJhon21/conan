@@ -116,111 +116,72 @@ export const RiskFactorsPanel: React.FC = () => {
 
   return (
     <Card className="bg-card border-border">
-      <CardHeader>
+      <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-primary" />
+          <AlertTriangle className="w-4 h-4 text-primary" />
           {t('risk.topFactors') || 'Top Risk Factors'}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {sortedFactors.map((factor, index) => (
-          <motion.div
-            key={factor.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            className={cn(
-              "p-4 rounded-lg border transition-all duration-200 hover:shadow-md hover:scale-[1.02]",
-              "bg-card/50 border-border/50 hover:border-border"
-            )}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <factor.icon className="w-4 h-4 text-primary" />
+      <CardContent className="pt-0">
+        <div className="h-80 overflow-y-auto space-y-3 pr-2">
+          {sortedFactors.map((factor, index) => (
+            <motion.div
+              key={factor.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2, delay: index * 0.05 }}
+              className={cn(
+                "p-3 rounded-lg border transition-all duration-200 hover:bg-accent/5",
+                "bg-card/50 border-border/50"
+              )}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <factor.icon className="w-4 h-4 text-primary shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-medium text-foreground text-sm truncate">{factor.name}</h4>
+                    <p className="text-xs text-muted-foreground line-clamp-1">
+                      {factor.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-medium text-foreground">{factor.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {factor.description}
-                  </p>
+                
+                <div className="flex items-center gap-2 shrink-0">
+                  <Badge className={`${getImpactColor(factor.impact)} text-xs px-2 py-0.5`}>
+                    {factor.impact}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {getTrendIcon(factor.trend)}
+                  </span>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2">
-                <Badge className={getImpactColor(factor.impact)}>
-                  {factor.impact}
-                </Badge>
-                <span className="text-sm text-muted-foreground">
-                  {getTrendIcon(factor.trend)}
-                </span>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">
-                  {t('risk.weight') || 'Risk Weight'}
-                </span>
-                <span className="text-sm font-medium text-foreground">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-foreground">
                   {factor.weight}%
                 </span>
+                <div className="w-20">
+                  <Progress 
+                    value={factor.weight} 
+                    className="h-1.5"
+                  />
+                </div>
               </div>
-              
-              <Progress 
-                value={factor.weight} 
-                className="h-2"
-              />
-            </div>
-            
-            {/* Risk level indicator */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
-              <div className="flex items-center gap-2">
-                <div 
-                  className={cn(
-                    "w-2 h-2 rounded-full",
-                    factor.weight >= 70 && "bg-destructive",
-                    factor.weight >= 40 && factor.weight < 70 && "bg-amber-500",
-                    factor.weight < 40 && "bg-success"
-                  )}
-                />
-                <span className="text-xs text-muted-foreground">
-                  Impact Level: {factor.impact}
-                </span>
-              </div>
-              
-              <div className="text-xs text-muted-foreground">
-                Rank #{index + 1}
-              </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
         
-        {/* Summary footer */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: sortedFactors.length * 0.1 }}
-          className="mt-6 p-4 bg-muted/30 rounded-lg border border-border/50"
-        >
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {t('risk.totalFactors') || 'Total Active Factors'}
+        {/* Compact summary footer */}
+        <div className="mt-3 pt-3 border-t border-border/50">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>
+              {sortedFactors.length} factors active
             </span>
-            <span className="font-medium text-foreground">
-              {sortedFactors.length}
+            <span>
+              Avg: {Math.round(sortedFactors.reduce((sum, f) => sum + f.weight, 0) / sortedFactors.length)}%
             </span>
           </div>
-          
-          <div className="flex items-center justify-between text-sm mt-2">
-            <span className="text-muted-foreground">
-              {t('risk.averageWeight') || 'Average Weight'}
-            </span>
-            <span className="font-medium text-foreground">
-              {Math.round(sortedFactors.reduce((sum, f) => sum + f.weight, 0) / sortedFactors.length)}%
-            </span>
-          </div>
-        </motion.div>
+        </div>
       </CardContent>
     </Card>
   );

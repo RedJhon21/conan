@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { AlertCard } from './AlertCard';
 import { Header } from './Header';
 import { VirtualizedTransactionMonitor } from './VirtualizedTransactionMonitor';
-import { RiskGauge } from './RiskGauge';
 import { RiskFactorsPanel } from './RiskFactorsPanel';
 import { StatisticsCards } from './StatisticsCards';
 import { PatternDetectionVisualization } from './pattern-detection/PatternDetectionVisualization';
@@ -112,19 +111,14 @@ export const Dashboard: React.FC = () => {
           <StatisticsCards />
         </div>
 
-        {/* Risk Overview Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-1">
-            <RiskGauge value={67} title={t('risk.overallScore') || 'Overall Risk Score'} />
-          </div>
-          <div className="lg:col-span-2">
-            <RiskFactorsPanel />
-          </div>
-        </div>
-
         {/* Enhanced Transaction Monitoring */}
         <div className="mb-8">
           <VirtualizedTransactionMonitor />
+        </div>
+
+        {/* Risk Factors Panel */}
+        <div className="mb-8">
+          <RiskFactorsPanel />
         </div>
 
         {/* Pattern Detection */}
