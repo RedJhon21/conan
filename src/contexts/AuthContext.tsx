@@ -38,7 +38,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const savedUser = localStorage.getItem('conan_user');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        // Convert lastLogin string back to Date object
+        if (parsedUser.lastLogin) {
+          parsedUser.lastLogin = new Date(parsedUser.lastLogin);
+        }
+        setUser(parsedUser);
       } catch (e) {
         localStorage.removeItem('conan_user');
       }
