@@ -198,8 +198,8 @@ export const VirtualizedTransactionMonitor: React.FC = () => {
 
   return (
     <>
-      <Card className="h-[600px] bg-card border-border">
-        <CardHeader className="space-y-4">
+      <Card className="bg-card border-border overflow-hidden">
+        <CardHeader className="space-y-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-semibold text-foreground">
               {t('transactions.realTimeMonitor') || 'Real-time Transaction Monitor'}
@@ -218,7 +218,7 @@ export const VirtualizedTransactionMonitor: React.FC = () => {
             />
           </div>
         </CardHeader>
-        <CardContent className="p-0 h-[480px]">
+        <CardContent className="p-0 flex-1 min-h-0">
           {filteredTransactions.length > 0 ? (
             <List
               height={480}
