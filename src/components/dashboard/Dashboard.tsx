@@ -129,25 +129,51 @@ export const Dashboard: React.FC = () => {
 
         {/* Alerts Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            Recent Alerts
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-foreground">
+              Recent Alerts
+            </h3>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                toast({
+                  title: 'All Alerts',
+                  description: 'Opening alerts management panel.',
+                });
+              }}
+              className="hover-scale"
+            >
+              View All
+            </Button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {alerts.map((alert) => (
-              <AlertCard
+              <div
                 key={alert.id}
-                title={alert.title}
-                description={alert.description}
-                severity={alert.severity}
-                timestamp={alert.timestamp}
-                actionLabel={t('common.viewDetails')}
-                onAction={() => {
+                className="cursor-pointer hover-scale transition-all duration-200"
+                onClick={() => {
                   toast({
-                    title: 'Alert Details',
-                    description: 'Opening detailed view for this alert.',
+                    title: `Alert #${alert.id} Details`,
+                    description: `${alert.title} - ${alert.description}`,
+                    variant: alert.severity === 'high' ? 'destructive' : 'default',
                   });
                 }}
-              />
+              >
+                <AlertCard
+                  title={alert.title}
+                  description={alert.description}
+                  severity={alert.severity}
+                  timestamp={alert.timestamp}
+                  actionLabel={t('common.viewDetails')}
+                  onAction={() => {
+                    toast({
+                      title: 'Alert Action',
+                      description: `Processing alert #${alert.id}`,
+                    });
+                  }}
+                />
+              </div>
             ))}
           </div>
         </div>
