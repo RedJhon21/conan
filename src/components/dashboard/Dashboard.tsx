@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AlertCard } from './AlertCard';
 import { Header } from './Header';
 import { VirtualizedTransactionMonitor } from './VirtualizedTransactionMonitor';
@@ -48,6 +49,7 @@ const generateAlerts = (t: (key: string) => string) => [
 export const Dashboard: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [metrics, setMetrics] = useState(generateMetrics());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -153,11 +155,9 @@ export const Dashboard: React.FC = () => {
                 key={alert.id}
                 className="cursor-pointer hover-scale transition-all duration-200"
                 onClick={() => {
-                  toast({
-                    title: `Alert #${alert.id} Details`,
-                    description: `${alert.title} - ${alert.description}`,
-                    variant: alert.severity === 'high' ? 'destructive' : 'default',
-                  });
+                  // Navigate to transaction details page with mock transaction ID
+                  const transactionId = `TXN${Math.floor(Math.random() * 1000000)}`;
+                  navigate(`/transaction/${transactionId}`);
                 }}
               >
                 <AlertCard
@@ -167,10 +167,9 @@ export const Dashboard: React.FC = () => {
                   timestamp={alert.timestamp}
                   actionLabel={t('common.viewDetails')}
                   onAction={() => {
-                    toast({
-                      title: 'Alert Action',
-                      description: `Processing alert #${alert.id}`,
-                    });
+                    // Navigate to transaction details
+                    const transactionId = `TXN${Math.floor(Math.random() * 1000000)}`;
+                    navigate(`/transaction/${transactionId}`);
                   }}
                 />
               </div>
