@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { AlertCard } from './AlertCard';
-import { FraudChart } from './FraudChart';
 import { Header } from './Header';
-import { TransactionMonitor } from './TransactionMonitor';
+import { VirtualizedTransactionMonitor } from './VirtualizedTransactionMonitor';
 import { RiskGauge } from './RiskGauge';
 import { RiskFactorsPanel } from './RiskFactorsPanel';
 import { StatisticsCards } from './StatisticsCards';
-import { PerformanceMonitor } from './PerformanceMonitor';
 import { PatternDetectionVisualization } from './pattern-detection/PatternDetectionVisualization';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
@@ -23,23 +21,6 @@ const generateMetrics = () => ({
   falsePositives: 23,
 });
 
-const generateChartData = () => [
-  { name: 'Jan', value: 4000, fraud: 120, risk: 6.5 },
-  { name: 'Feb', value: 3800, fraud: 98, risk: 5.8 },
-  { name: 'Mar', value: 5200, fraud: 156, risk: 7.2 },
-  { name: 'Apr', value: 4900, fraud: 134, risk: 6.9 },
-  { name: 'May', value: 6100, fraud: 189, risk: 8.1 },
-  { name: 'Jun', value: 5800, fraud: 167, risk: 7.6 },
-];
-
-const generateVolumeData = () => [
-  { name: '00:00', value: 1200 },
-  { name: '04:00', value: 800 },
-  { name: '08:00', value: 2400 },
-  { name: '12:00', value: 3200 },
-  { name: '16:00', value: 2800 },
-  { name: '20:00', value: 1600 },
-];
 
 const generateAlerts = (t: (key: string) => string) => [
   {
@@ -99,8 +80,6 @@ export const Dashboard: React.FC = () => {
   };
 
   const alerts = generateAlerts(t);
-  const chartData = generateChartData();
-  const volumeData = generateVolumeData();
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,23 +122,9 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Transaction Monitoring & Charts */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-          <div className="xl:col-span-2">
-            <TransactionMonitor />
-          </div>
-          <div className="space-y-6">
-            <FraudChart
-              title={t('charts.fraudTrends')}
-              data={chartData}
-              type="line"
-            />
-            <FraudChart
-              title={t('charts.transactionVolume')}
-              data={volumeData}
-              type="bar"
-            />
-          </div>
+        {/* Enhanced Transaction Monitoring */}
+        <div className="mb-8">
+          <VirtualizedTransactionMonitor />
         </div>
 
         {/* Pattern Detection */}
@@ -167,10 +132,6 @@ export const Dashboard: React.FC = () => {
           <PatternDetectionVisualization />
         </div>
 
-        {/* Performance Monitor */}
-        <div className="mb-8">
-          <PerformanceMonitor />
-        </div>
 
         {/* Alerts Section */}
         <div className="space-y-4">
