@@ -123,6 +123,60 @@ export const SAMA_TEMPLATES: SAMATemplate[] = [
     ],
     retentionPeriod: 7,
     autoArchive: true
+  },
+  {
+    id: 'sama-compliance-001',
+    name: 'SAMA Compliance Audit Report',
+    type: 'compliance-audit',
+    standard: 'sama-standard',
+    version: '2024.1',
+    sections: [
+      {
+        id: 'audit-summary',
+        title: 'Audit Summary',
+        order: 1,
+        required: true,
+        type: 'text',
+        fields: [
+          { id: 'audit-scope', name: 'Audit Scope', type: 'textarea', required: true },
+          { id: 'audit-period', name: 'Audit Period', type: 'text', required: true },
+          { id: 'compliance-status', name: 'Overall Compliance Status', type: 'select', required: true,
+            options: ['compliant', 'non-compliant', 'partially-compliant'] }
+        ]
+      },
+      {
+        id: 'findings',
+        title: 'Compliance Findings',
+        order: 2,
+        required: true,
+        type: 'table',
+        fields: [
+          { id: 'finding-details', name: 'Finding Details', type: 'textarea', required: true },
+          { id: 'severity', name: 'Severity', type: 'select', required: true,
+            options: ['critical', 'high', 'medium', 'low'] },
+          { id: 'recommendation', name: 'Recommendation', type: 'textarea', required: true }
+        ]
+      },
+      {
+        id: 'action-plan',
+        title: 'Corrective Action Plan',
+        order: 3,
+        required: true,
+        type: 'table',
+        fields: [
+          { id: 'action-item', name: 'Action Item', type: 'textarea', required: true },
+          { id: 'responsible-party', name: 'Responsible Party', type: 'text', required: true },
+          { id: 'target-date', name: 'Target Completion Date', type: 'date', required: true }
+        ]
+      }
+    ],
+    mandatoryFields: ['audit-scope', 'compliance-status', 'finding-details'],
+    approvalWorkflow: [
+      { step: 1, role: 'compliance-officer', required: true, parallel: false },
+      { step: 2, role: 'executive-management', required: true, parallel: false }
+    ],
+    retentionPeriod: 7,
+    autoArchive: true
   }
 ];
 
