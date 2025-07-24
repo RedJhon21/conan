@@ -30,25 +30,40 @@ import {
   PieChart,
   TrendingUp,
   Shield,
-  Clock
+  Clock,
+  AlertTriangle,
+  Search,
+  FileCheck,
+  Users,
+  Settings,
+  Eye
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateReport as generateReportFile } from '@/services/reportService';
+import { generateSAMAReport } from '@/services/samaReportService';
+import { SAMAReportConfig } from '@/types/sama-reporting';
+import TemplateManager from './TemplateManager';
 
 interface ReportConfig {
-  type: 'summary' | 'detailed' | 'trends' | 'performance';
+  type: 'summary' | 'detailed' | 'trends' | 'performance' | 'incident' | 'regulatory' | 'investigation' | 'risk-assessment' | 'compliance-audit' | 'executive';
   format: 'pdf' | 'excel' | 'csv' | 'print';
   period: 'last24h' | 'last7d' | 'last30d' | 'custom';
   includeCharts: boolean;
   includePatterns: boolean;
   includePerformance: boolean;
-  confidentialityLevel: 'public' | 'internal' | 'confidential';
+  confidentialityLevel: 'public' | 'internal' | 'confidential' | 'restricted';
+  // SAMA specific fields
+  template?: 'sama-standard' | 'iso27001' | 'nist' | 'custom';
+  language?: 'en' | 'ar' | 'both';
+  digitalSignature?: boolean;
+  watermark?: boolean;
 }
 
 export const ReportGenerator: React.FC = () => {
   const { t, language } = useLanguage();
   const { user, hasPermission } = useAuth();
   const { toast } = useToast();
+  const [showTemplateManager, setShowTemplateManager] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [config, setConfig] = useState<ReportConfig>({
@@ -59,6 +74,10 @@ export const ReportGenerator: React.FC = () => {
     includePatterns: true,
     includePerformance: false,
     confidentialityLevel: 'internal',
+    template: 'sama-standard',
+    language: 'en',
+    digitalSignature: false,
+    watermark: false,
   });
 
   const canExportAdvanced = hasPermission('export_advanced');
@@ -70,28 +89,81 @@ export const ReportGenerator: React.FC = () => {
       label: t('reports.types.summary'), 
       icon: BarChart3,
       description: t('reports.types.summaryDesc'),
-      permission: 'export_basic'
+      permission: 'export_basic',
+      category: 'standard'
     },
     { 
       value: 'detailed', 
       label: t('reports.types.detailed'), 
       icon: FileText,
       description: t('reports.types.detailedDesc'),
-      permission: 'export_advanced'
+      permission: 'export_advanced',
+      category: 'standard'
     },
     { 
       value: 'trends', 
       label: t('reports.types.trends'), 
       icon: TrendingUp,
       description: t('reports.types.trendsDesc'),
-      permission: 'export_basic'
+      permission: 'export_basic',
+      category: 'standard'
     },
     { 
       value: 'performance', 
       label: t('reports.types.performance'), 
       icon: PieChart,
       description: t('reports.types.performanceDesc'),
-      permission: 'export_advanced'
+      permission: 'export_advanced',
+      category: 'standard'
+    },
+    // SAMA Compliance Reports
+    { 
+      value: 'incident', 
+      label: 'SAMA Incident Report', 
+      icon: AlertTriangle,
+      description: 'SAMA-compliant fraud incident documentation',
+      permission: 'export_compliance',
+      category: 'sama'
+    },
+    { 
+      value: 'regulatory', 
+      label: 'Regulatory Compliance Report', 
+      icon: Shield,
+      description: 'SAMA regulatory compliance assessment',
+      permission: 'export_compliance',
+      category: 'sama'
+    },
+    { 
+      value: 'investigation', 
+      label: 'Investigation Report', 
+      icon: Search,
+      description: 'Detailed fraud investigation documentation',
+      permission: 'export_advanced',
+      category: 'sama'
+    },
+    { 
+      value: 'risk-assessment', 
+      label: 'Risk Assessment Report', 
+      icon: TrendingUp,
+      description: 'Comprehensive risk evaluation',
+      permission: 'export_advanced',
+      category: 'sama'
+    },
+    { 
+      value: 'compliance-audit', 
+      label: 'Compliance Audit Report', 
+      icon: FileCheck,
+      description: 'Internal compliance audit findings',
+      permission: 'export_compliance',
+      category: 'sama'
+    },
+    { 
+      value: 'executive', 
+      label: 'Executive Summary', 
+      icon: Users,
+      description: 'High-level executive dashboard',
+      permission: 'export_executive',
+      category: 'sama'
     },
   ];
 
@@ -136,8 +208,38 @@ export const ReportGenerator: React.FC = () => {
         // Trigger print dialog
         window.print();
       } else {
-        // Generate and download actual report
-        const fileName = await generateReportFile(config);
+        // Check if this is a SAMA report
+        const isSAMAReport = ['incident', 'regulatory', 'investigation', 'risk-assessment', 'compliance-audit', 'executive'].includes(config.type);
+        
+        let fileName: string;
+        if (isSAMAReport) {
+          // Generate SAMA-compliant report
+          const samaConfig: SAMAReportConfig = {
+            reportType: config.type as 'incident' | 'regulatory' | 'investigation' | 'risk-assessment' | 'compliance-audit' | 'executive',
+            template: config.template || 'sama-standard',
+            classification: config.confidentialityLevel as 'public' | 'internal' | 'confidential' | 'restricted',
+            language: config.language || 'en',
+            digitalSignature: config.digitalSignature || false,
+            watermark: config.watermark || false,
+            distribution: {
+              internal: [],
+              external: [],
+              regulatorySubmission: config.type === 'incident' || config.type === 'regulatory'
+            },
+            type: 'summary' as 'summary' | 'detailed' | 'trends' | 'performance',
+            format: config.format,
+            period: config.period,
+            includeCharts: config.includeCharts,
+            includePatterns: config.includePatterns,
+            includePerformance: config.includePerformance,
+            confidentialityLevel: config.confidentialityLevel as 'public' | 'internal' | 'confidential'
+          };
+          fileName = await generateSAMAReport(samaConfig);
+        } else {
+          // Generate standard report
+          fileName = await generateReportFile(config);
+        }
+        
         toast({
           title: t('reports.generated'),
           description: `${t('reports.downloadStarted')}: ${fileName}`,
@@ -180,42 +282,92 @@ export const ReportGenerator: React.FC = () => {
             {/* Report Type Selection */}
             <div className="space-y-3">
               <Label>{t('reports.selectType')}</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {reportTypes.map((type) => {
-                  const hasAccess = type.permission === 'export_basic' ? canExportBasic : canExportAdvanced;
-                  const Icon = type.icon;
-                  
-                  return (
-                    <Card 
-                      key={type.value}
-                      className={`cursor-pointer transition-all border-2 ${
-                        config.type === type.value 
-                          ? 'border-primary bg-primary/5' 
-                          : 'border-border hover:border-primary/50'
-                      } ${!hasAccess ? 'opacity-50' : ''}`}
-                      onClick={() => hasAccess && setConfig({...config, type: type.value as ReportConfig['type']})}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-start space-x-3">
-                          <Icon className="h-5 w-5 text-primary mt-0.5" />
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2">
-                              <h4 className="font-medium text-sm">{type.label}</h4>
-                              {!hasAccess && (
-                                <Badge variant="destructive" className="text-xs">
-                                  {t('reports.restricted')}
-                                </Badge>
-                              )}
+              
+              {/* Standard Reports */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Standard Reports</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {reportTypes.filter(type => type.category === 'standard').map((type) => {
+                    const hasAccess = hasPermission(type.permission);
+                    const Icon = type.icon;
+                    
+                    return (
+                      <Card 
+                        key={type.value}
+                        className={`cursor-pointer transition-all border-2 ${
+                          config.type === type.value 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/50'
+                        } ${!hasAccess ? 'opacity-50' : ''}`}
+                        onClick={() => hasAccess && setConfig({...config, type: type.value as ReportConfig['type']})}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start space-x-3">
+                            <Icon className="h-5 w-5 text-primary mt-0.5" />
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <h4 className="font-medium text-sm">{type.label}</h4>
+                                {!hasAccess && (
+                                  <Badge variant="destructive" className="text-xs">
+                                    {t('reports.restricted')}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {type.description}
+                              </p>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {type.description}
-                            </p>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SAMA Compliance Reports */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <h4 className="text-sm font-medium text-muted-foreground">SAMA Compliance Reports</h4>
+                  <Badge variant="outline" className="text-xs">🇸🇦 Regulatory</Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {reportTypes.filter(type => type.category === 'sama').map((type) => {
+                    const hasAccess = hasPermission(type.permission);
+                    const Icon = type.icon;
+                    
+                    return (
+                      <Card 
+                        key={type.value}
+                        className={`cursor-pointer transition-all border-2 ${
+                          config.type === type.value 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/50'
+                        } ${!hasAccess ? 'opacity-50' : ''}`}
+                        onClick={() => hasAccess && setConfig({...config, type: type.value as ReportConfig['type']})}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start space-x-3">
+                            <Icon className="h-5 w-5 text-primary mt-0.5" />
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2">
+                                <h4 className="font-medium text-sm">{type.label}</h4>
+                                {!hasAccess && (
+                                  <Badge variant="destructive" className="text-xs">
+                                    {t('reports.restricted')}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {type.description}
+                              </p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -322,6 +474,92 @@ export const ReportGenerator: React.FC = () => {
               </Select>
             </div>
 
+            {/* SAMA Options for SAMA Reports */}
+            {['incident', 'regulatory', 'investigation', 'risk-assessment', 'compliance-audit', 'executive'].includes(config.type) && (
+              <Card className="bg-blue-50/50 border-blue-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-blue-500" />
+                    SAMA Compliance Options
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Template Standard</Label>
+                      <Select
+                        value={config.template || 'sama-standard'}
+                        onValueChange={(value) => setConfig({...config, template: value as any})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sama-standard">SAMA Standard</SelectItem>
+                          <SelectItem value="iso27001">ISO 27001</SelectItem>
+                          <SelectItem value="nist">NIST Framework</SelectItem>
+                          <SelectItem value="custom">Custom Template</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Language</Label>
+                      <Select
+                        value={config.language || 'en'}
+                        onValueChange={(value) => setConfig({...config, language: value as any})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="en">English</SelectItem>
+                          <SelectItem value="ar">Arabic</SelectItem>
+                          <SelectItem value="both">Both Languages</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Shield className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">Digital Signature</span>
+                      </div>
+                      <Switch
+                        checked={config.digitalSignature || false}
+                        onCheckedChange={(checked) => setConfig({...config, digitalSignature: checked})}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">Security Watermark</span>
+                      </div>
+                      <Switch
+                        checked={config.watermark || false}
+                        onCheckedChange={(checked) => setConfig({...config, watermark: checked})}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowTemplateManager(true)}
+                      className="gap-2 w-full"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Manage Templates
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Generate Button */}
             <div className="flex justify-end space-x-2 pt-4 border-t">
               <Button variant="outline" onClick={() => setIsOpen(false)}>
@@ -344,6 +582,12 @@ export const ReportGenerator: React.FC = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Template Manager */}
+      <TemplateManager 
+        isOpen={showTemplateManager} 
+        onClose={() => setShowTemplateManager(false)} 
+      />
 
       {/* Print Styles */}
       <style>{`

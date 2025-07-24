@@ -1,11 +1,16 @@
 interface ReportConfig {
-  type: 'summary' | 'detailed' | 'trends' | 'performance';
+  type: 'summary' | 'detailed' | 'trends' | 'performance' | 'incident' | 'regulatory' | 'investigation' | 'risk-assessment' | 'compliance-audit' | 'executive';
   format: 'pdf' | 'excel' | 'csv' | 'print';
   period: 'last24h' | 'last7d' | 'last30d' | 'custom';
   includeCharts: boolean;
   includePatterns: boolean;
   includePerformance: boolean;
-  confidentialityLevel: 'public' | 'internal' | 'confidential';
+  confidentialityLevel: 'public' | 'internal' | 'confidential' | 'restricted';
+  // SAMA specific fields
+  template?: 'sama-standard' | 'iso27001' | 'nist' | 'custom';
+  language?: 'en' | 'ar' | 'both';
+  digitalSignature?: boolean;
+  watermark?: boolean;
 }
 
 interface ReportData {
