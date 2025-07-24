@@ -74,7 +74,7 @@ const TransactionRow = React.memo(({
   if (!transaction) return null;
 
   return (
-    <div style={style} className="px-6">
+    <div style={style} className="px-4">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
