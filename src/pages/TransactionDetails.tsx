@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
-import AISummary from '@/components/dashboard/AISummary';
+import EnhancedAISummary from '@/components/dashboard/EnhancedAISummary';
 
 interface TransactionDetail {
   id: string;
@@ -316,9 +316,9 @@ const TransactionDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Summary Modal */}
+      {/* Enhanced AI Summary Modal */}
       {transaction && (
-        <AISummary
+        <EnhancedAISummary
           transaction={transaction}
           isOpen={showAISummary}
           onClose={handleCloseSummary}
