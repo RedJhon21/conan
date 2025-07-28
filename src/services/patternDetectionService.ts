@@ -87,7 +87,7 @@ const generateNetworkLinks = (nodes: NetworkNode[]): NetworkLink[] => {
 
 const generateTimelineEvents = (): TimelineEvent[] => {
   const events: TimelineEvent[] = [];
-  const patternTypes: PatternType[] = ['velocity_attack', 'account_takeover', 'location_anomaly', 'amount_pattern', 'merchant_fraud', 'time_based'];
+  const patternTypes: PatternType[] = ['velocity_attack', 'account_takeover', 'location_anomaly', 'amount_pattern', 'merchant_fraud', 'time_based', 'account_muling'];
   const locations = ['New York', 'London', 'Tokyo', 'Dubai', 'Sydney', 'Mumbai'];
   const merchants = ['Amazon', 'PayPal', 'Stripe', 'Square', 'Apple Pay', 'Google Pay'];
 
@@ -166,6 +166,12 @@ const generatePatternBadges = (): PatternBadge[] => {
       count: Math.floor(Math.random() * 7) + 1,
       severity: Math.random() > 0.6 ? 'high' : Math.random() > 0.3 ? 'medium' : 'low',
       description: 'Transactions outside normal hours',
+    },
+    {
+      type: 'account_muling',
+      count: Math.floor(Math.random() * 5) + 1,
+      severity: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
+      description: 'Money muling activity detected - rapid fund transfers through accounts',
     },
   ];
 

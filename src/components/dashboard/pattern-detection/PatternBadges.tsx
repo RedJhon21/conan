@@ -8,7 +8,8 @@ import {
   MapPin, 
   DollarSign, 
   Store, 
-  Clock 
+  Clock,
+  ArrowRightLeft
 } from 'lucide-react';
 
 interface PatternBadgesProps {
@@ -24,6 +25,7 @@ const patternIcons: Record<PatternType, React.ComponentType<any>> = {
   amount_pattern: DollarSign,
   merchant_fraud: Store,
   time_based: Clock,
+  account_muling: ArrowRightLeft,
 };
 
 const getSeverityColor = (severity: 'low' | 'medium' | 'high') => {
@@ -54,6 +56,7 @@ export const PatternBadges: React.FC<PatternBadgesProps> = ({
       amount_pattern: t('patternDetection.patterns.amountPattern'),
       merchant_fraud: t('patternDetection.patterns.merchantFraud'),
       time_based: t('patternDetection.patterns.timeBased'),
+      account_muling: t('patternDetection.patterns.accountMuling'),
     };
     return labels[type] || type;
   };

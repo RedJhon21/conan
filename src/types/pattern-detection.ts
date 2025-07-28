@@ -4,7 +4,8 @@ export type PatternType =
   | 'location_anomaly' 
   | 'amount_pattern' 
   | 'merchant_fraud' 
-  | 'time_based';
+  | 'time_based'
+  | 'account_muling';
 
 export interface NetworkNode {
   id: string;

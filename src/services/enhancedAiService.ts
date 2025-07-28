@@ -96,6 +96,13 @@ export class EnhancedAIService {
         transactions: transactions.slice(2, 6).map(t => t.id),
         description: 'Multiple transactions just below reporting thresholds',
         riskLevel: 'medium' as const
+      },
+      {
+        type: 'Account Muling',
+        confidence: 0.82,
+        transactions: transactions.slice(1, 5).map(t => t.id),
+        description: 'Money muling activity detected - rapid fund transfers through intermediary accounts',
+        riskLevel: 'high' as const
       }
     ];
 
