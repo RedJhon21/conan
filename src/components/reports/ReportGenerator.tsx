@@ -182,24 +182,7 @@ export const ReportGenerator: React.FC = () => {
   ];
 
   const generateReport = async () => {
-    if (!canExportBasic) {
-      toast({
-        title: t('reports.noPermission'),
-        description: t('reports.noPermissionDesc'),
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    const selectedType = reportTypes.find(type => type.value === config.type);
-    if (selectedType?.permission === 'export_advanced' && !canExportAdvanced) {
-      toast({
-        title: t('reports.noPermissionAdvanced'),
-        description: t('reports.noPermissionAdvancedDesc'),
-        variant: 'destructive',
-      });
-      return;
-    }
+    // Allow all reports to be downloaded without permission checks
 
     setIsGenerating(true);
 
@@ -298,8 +281,8 @@ export const ReportGenerator: React.FC = () => {
                           config.type === type.value 
                             ? 'border-primary bg-primary/5' 
                             : 'border-border hover:border-primary/50'
-                        } ${!hasAccess ? 'opacity-50' : ''}`}
-                        onClick={() => hasAccess && setConfig({...config, type: type.value as ReportConfig['type']})}
+                        }`}
+                        onClick={() => setConfig({...config, type: type.value as ReportConfig['type']})}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start space-x-3">
@@ -307,11 +290,6 @@ export const ReportGenerator: React.FC = () => {
                             <div className="flex-1">
                               <div className="flex items-center space-x-2">
                                 <h4 className="font-medium text-sm">{type.label}</h4>
-                                {!hasAccess && (
-                                  <Badge variant="destructive" className="text-xs">
-                                    {t('reports.restricted')}
-                                  </Badge>
-                                )}
                               </div>
                               <p className="text-xs text-muted-foreground mt-1">
                                 {type.description}
@@ -343,8 +321,8 @@ export const ReportGenerator: React.FC = () => {
                           config.type === type.value 
                             ? 'border-primary bg-primary/5' 
                             : 'border-border hover:border-primary/50'
-                        } ${!hasAccess ? 'opacity-50' : ''}`}
-                        onClick={() => hasAccess && setConfig({...config, type: type.value as ReportConfig['type']})}
+                        }`}
+                        onClick={() => setConfig({...config, type: type.value as ReportConfig['type']})}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start space-x-3">
@@ -352,11 +330,6 @@ export const ReportGenerator: React.FC = () => {
                             <div className="flex-1">
                               <div className="flex items-center space-x-2">
                                 <h4 className="font-medium text-sm">{type.label}</h4>
-                                {!hasAccess && (
-                                  <Badge variant="destructive" className="text-xs">
-                                    {t('reports.restricted')}
-                                  </Badge>
-                                )}
                               </div>
                               <p className="text-xs text-muted-foreground mt-1">
                                 {type.description}
@@ -439,7 +412,6 @@ export const ReportGenerator: React.FC = () => {
                   <Switch
                     checked={config.includePatterns}
                     onCheckedChange={(checked) => setConfig({...config, includePatterns: checked})}
-                    disabled={!canExportAdvanced}
                   />
                 </div>
 
@@ -451,7 +423,7 @@ export const ReportGenerator: React.FC = () => {
                   <Switch
                     checked={config.includePerformance}
                     onCheckedChange={(checked) => setConfig({...config, includePerformance: checked})}
-                    disabled={!canExportAdvanced}
+                    
                   />
                 </div>
               </div>
