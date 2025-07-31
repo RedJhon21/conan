@@ -250,8 +250,8 @@ export const ReportGenerator: React.FC = () => {
             <span>{t('reports.generate')}</span>
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="flex items-center space-x-2">
               <FileText className="h-5 w-5" />
               <span>{t('reports.title')}</span>
@@ -261,7 +261,7 @@ export const ReportGenerator: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6">
+          <div className="space-y-6 overflow-y-auto flex-1 pr-2">
             {/* Report Type Selection */}
             <div className="space-y-3">
               <Label>{t('reports.selectType')}</Label>
@@ -432,26 +432,26 @@ export const ReportGenerator: React.FC = () => {
             {/* Confidentiality Level */}
             <div className="space-y-2">
               <Label>{t('reports.confidentiality')}</Label>
-              <Select value={config.confidentialityLevel} onValueChange={(value: ReportConfig['confidentialityLevel']) => 
+              <Select value={config.confidentialityLevel} onValueChange={(value: ReportConfig['confidentialityLevel']) =>
                 setConfig({...config, confidentialityLevel: value})
               }>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">{t('reports.confidentiality.public')}</SelectItem>
-                  <SelectItem value="internal">{t('reports.confidentiality.internal')}</SelectItem>
-                  <SelectItem value="confidential">{t('reports.confidentiality.confidential')}</SelectItem>
+                <SelectContent className="z-50">
+                  <SelectItem value="public" className="cursor-pointer">{t('reports.confidentiality.public')}</SelectItem>
+                  <SelectItem value="internal" className="cursor-pointer">{t('reports.confidentiality.internal')}</SelectItem>
+                  <SelectItem value="confidential" className="cursor-pointer">{t('reports.confidentiality.confidential')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* SAMA Options for SAMA Reports */}
             {['incident', 'regulatory', 'investigation', 'risk-assessment', 'compliance-audit', 'executive'].includes(config.type) && (
-              <Card className="bg-blue-50/50 border-blue-200">
+              <Card className="bg-primary/5 border-primary/20 dark:bg-primary/10 dark:border-primary/30">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-blue-500" />
+                    <Shield className="h-4 w-4 text-primary" />
                     SAMA Compliance Options
                   </CardTitle>
                 </CardHeader>
@@ -496,7 +496,7 @@ export const ReportGenerator: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <Shield className="h-4 w-4 text-muted-foreground" />
+                        <Shield className="h-4 w-4 text-primary/70" />
                         <span className="text-sm">Digital Signature</span>
                       </div>
                       <Switch
@@ -507,7 +507,7 @@ export const ReportGenerator: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <Eye className="h-4 w-4 text-muted-foreground" />
+                        <Eye className="h-4 w-4 text-primary/70" />
                         <span className="text-sm">Security Watermark</span>
                       </div>
                       <Switch
@@ -517,12 +517,12 @@ export const ReportGenerator: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t">
+                  <div className="pt-2 border-t border-primary/10">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowTemplateManager(true)}
-                      className="gap-2 w-full"
+                      className="gap-2 w-full border-primary/20 hover:bg-primary/5"
                     >
                       <Settings className="h-4 w-4" />
                       Manage Templates
@@ -532,25 +532,26 @@ export const ReportGenerator: React.FC = () => {
               </Card>
             )}
 
-            {/* Generate Button */}
-            <div className="flex justify-end space-x-2 pt-4 border-t">
-              <Button variant="outline" onClick={() => setIsOpen(false)}>
-                {t('common.cancel')}
-              </Button>
-              <Button onClick={generateReport} disabled={isGenerating}>
-                {isGenerating ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
-                    <span>{t('reports.generating')}</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <Download className="h-4 w-4" />
-                    <span>{t('reports.generate')}</span>
-                  </div>
-                )}
-              </Button>
-            </div>
+          </div>
+
+          {/* Generate Button - Fixed Footer */}
+          <div className="flex justify-end space-x-2 pt-4 border-t flex-shrink-0 bg-background">
+            <Button variant="outline" onClick={() => setIsOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button onClick={generateReport} disabled={isGenerating}>
+              {isGenerating ? (
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
+                  <span>{t('reports.generating')}</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Download className="h-4 w-4" />
+                  <span>{t('reports.generate')}</span>
+                </div>
+              )}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

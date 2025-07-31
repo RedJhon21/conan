@@ -40,6 +40,13 @@ const translations = {
     'common.viewDetails': 'View Details',
     'common.refresh': 'Refresh',
     'common.export': 'Export',
+
+    // Transactions
+    'transactions.realTimeMonitor': 'Real-time Transaction Monitor',
+    'transactions.search': 'Search transactions...',
+
+    // Risk
+    'risk.topFactors': 'Top Risk Factors',
     
     // AI Summary
     'ai.generateSummary': 'Generate AI Summary',
@@ -234,6 +241,13 @@ const translations = {
     'status.online': 'متصل',
     'status.processing': 'قيد المعالجة',
     'status.alert': 'تنبيه',
+
+    // Transactions
+    'transactions.realTimeMonitor': 'مراقب المعاملات في الوقت الفعلي',
+    'transactions.search': 'البحث في المعاملات...',
+
+    // Risk
+    'risk.topFactors': 'أهم عوامل المخاطر',
     
     // Common
     'common.viewDetails': 'عرض التفاصيل',
