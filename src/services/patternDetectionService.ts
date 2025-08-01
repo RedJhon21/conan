@@ -1,4 +1,5 @@
 import { PatternDetectionData, NetworkNode, NetworkLink, TimelineEvent, HeatmapCell, PatternBadge, PatternType } from '@/types/pattern-detection';
+import { generateSimpleTransactionId } from '@/lib/idGenerator';
 
 // Mock data generators
 export const generatePatternDetectionData = (): PatternDetectionData => {
@@ -97,7 +98,7 @@ const generateTimelineEvents = (): TimelineEvent[] => {
 
     events.push({
       timestamp,
-      transactionId: `tx-${i}`,
+      transactionId: generateSimpleTransactionId(),
       riskScore: Math.random() * 100,
       patternType: patternTypes[Math.floor(Math.random() * patternTypes.length)],
       location: locations[Math.floor(Math.random() * locations.length)],

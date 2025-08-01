@@ -8,6 +8,7 @@ import { StatisticsCards } from './StatisticsCards';
 import { PatternDetectionVisualization } from './pattern-detection/PatternDetectionVisualization';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
+import { generateSimpleTransactionId } from '@/lib/idGenerator';
 import { 
   RefreshCw 
 } from 'lucide-react';
@@ -59,7 +60,7 @@ export const Dashboard: React.FC = () => {
       if (Math.random() > 0.8) {
         toast({
           title: t('alerts.highRisk'),
-          description: `Transaction ID: TXN-${Math.floor(Math.random() * 1000000)}`,
+          description: `Transaction ID: ${generateSimpleTransactionId()}`,
           variant: 'destructive',
         });
       }
@@ -155,8 +156,8 @@ export const Dashboard: React.FC = () => {
                 key={alert.id}
                 className="cursor-pointer hover-scale transition-all duration-200"
                 onClick={() => {
-                  // Navigate to transaction details page with mock transaction ID
-                  const transactionId = `TXN${Math.floor(Math.random() * 1000000)}`;
+                  // Navigate to transaction details page with unique transaction ID
+                  const transactionId = generateSimpleTransactionId();
                   navigate(`/transaction/${transactionId}`);
                 }}
               >
@@ -168,7 +169,7 @@ export const Dashboard: React.FC = () => {
                   actionLabel={t('common.viewDetails')}
                   onAction={() => {
                     // Navigate to transaction details
-                    const transactionId = `TXN${Math.floor(Math.random() * 1000000)}`;
+                    const transactionId = generateSimpleTransactionId();
                     navigate(`/transaction/${transactionId}`);
                   }}
                 />

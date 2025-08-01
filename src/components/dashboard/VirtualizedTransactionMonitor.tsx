@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Search, MapPin, Clock, DollarSign, AlertTriangle, Brain } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+import { generateGuaranteedUniqueTransactionId } from '@/lib/idGenerator';
 import AISummary from './AISummary';
 
 interface Transaction {
@@ -34,7 +35,7 @@ const generateMockTransaction = (): Transaction => {
   else if (riskScore >= 40) riskLevel = 'medium';
 
   return {
-    id: `TXN${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+    id: generateGuaranteedUniqueTransactionId(),
     amount: amounts[Math.floor(Math.random() * amounts.length)],
     currency: 'SAR',
     timestamp: new Date(Date.now() - Math.random() * 86400000), // Random time within last day
